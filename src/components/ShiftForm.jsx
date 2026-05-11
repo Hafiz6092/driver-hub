@@ -2,7 +2,7 @@ import {useState} from 'react';
 
 const ShiftForm = ({onAddShift}) => {
     //create local state variable for our three inputs
-    //'usState' gives us the variable ane the funtion to change it
+    //'usState' gives us the variable ane the function to change it
     const [platform, setPlatform] = useState('Uber');
     const [hours, setHours] = useState(' ');
     const [earnings, setEarnings] = useState(' ');
@@ -13,21 +13,21 @@ const ShiftForm = ({onAddShift}) => {
         e.preventDefault();
 
         //simple check: is hours or earnings are missing, show an alert and stop
-        if(!hours || !earings) return alert("Please fill in all fields");
+        if(!hours || !earnings) return alert("Please fill in all fields");
 
         //we create a new object using our current state variables
         const newShift = {
            //date.now generates a unique number based on current time
             id: Date.now(),
             platform,
-
             //we convert strings to numbers because input fields return text by default
-            hours: parseFloat(hours),
-            earings: parseFloat(earings),
+            hours: Number(hours),
+            earnings: Number(earnings),
             //auto generate today's date;
             date: new Date().toLocaleDateString()
 
         };
+        console.log("Adding Shift:", newShift)
         //call the function passed from app.jsx to "lift" the data back up to parent
         onAddShift(newShift);
 
@@ -51,7 +51,7 @@ const ShiftForm = ({onAddShift}) => {
             </div>
 
             <div>
-                <label>Hourse Worked: </label>
+                <label>Hours Worked: </label>
                 {/**e.target.value is the text the user just typed into the box */}
                 <input 
                 type = "number"

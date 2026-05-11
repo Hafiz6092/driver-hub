@@ -30,14 +30,14 @@ const ShiftList = ({ shifts, onDelete}) => {
                 }}
                 >
                     <div>
-                        {/**displaying the specific properties we created in our Shiftform object */}
+                        {/**displaying the specific properties we created in our ShiftForm object */}
                         <strong>{shift.platform}</strong> - {shift.date} <br/>
                         <span>{shift.hours} hours | ${shift.earnings} </span>
                     </div>
                     {/**we call the onDelete and pass the specific ID of this shift */}
                     <button
                     onClick={() => onDelete(shift.id)}
-                    tyle={{ backgroundColor: '#ff4d4d', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer' }}
+                    style={{ backgroundColor: '#ff4d4d', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer' }}
                     >Delete</button>
                 </div>
              )

@@ -6,6 +6,7 @@ const ShiftForm = ({onAddShift}) => {
     const [platform, setPlatform] = useState('Uber');
     const [hours, setHours] = useState(' ');
     const [earnings, setEarnings] = useState(' ');
+    
 
     //this function runs when the user clicks the "add shift" button
     const handleSubmit = (e) => {

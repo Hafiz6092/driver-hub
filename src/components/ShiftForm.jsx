@@ -6,6 +6,7 @@ const ShiftForm = ({onAddShift}) => {
     const [platform, setPlatform] = useState('Uber');
     const [hours, setHours] = useState(' ');
     const [earnings, setEarnings] = useState(' ');
+    const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     
 
     //this function runs when the user clicks the "add shift" button
@@ -25,7 +26,9 @@ const ShiftForm = ({onAddShift}) => {
             hours: Number(hours),
             earnings: Number(earnings),
             //auto generate today's date;
-            date: new Date().toLocaleDateString()
+            //date: new Date().toLocaleDateString()
+
+            date: date
 
         };
         console.log("Adding Shift:", newShift)
@@ -49,6 +52,14 @@ const ShiftForm = ({onAddShift}) => {
                     <option value="Uber"> Uber</option>
                     <option value="Lyft"> Lyft</option>
                 </select>
+            </div>
+            <div>
+                <label>Date: </label> {/**incase user forget to log in shifts they can pick a date and enter the data */}
+                <input
+                    type="date"
+                    value={date}
+                    onChange={(e)=> setDate(e.target.value)}
+                />
             </div>
 
             <div>

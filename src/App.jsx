@@ -4,6 +4,7 @@ import './App.css'
 import EarningsSummary from './components/EarningsSummary';
 import ShiftForm from './components/ShiftForm';
 import ShiftList from './components/ShiftList';
+import WeeklyBreakdown from './components/WeeklyBreakdown';
 
 function App() {
   //initialize state
@@ -35,13 +36,14 @@ function App() {
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
       <header>
-        <h1 className="text-3xl font'bold underline text-blue-600">Driver Hub</h1>
+        <h1 className="text-3xl font-bold underline text-blue-600">Driver Hub</h1>
         <p>Track your rideshare Earnings and productivity.</p>
       </header>
       <main>
         <EarningsSummary shifts={shifts}/>
         <ShiftForm onAddShift={addShift}/>
         <ShiftList shifts={shifts} onDelete={deleteShift}/>
+        <WeeklyBreakdown shifts={shifts}/>
       </main>
     </div>
   )

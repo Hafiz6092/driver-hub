@@ -33,9 +33,9 @@ function App() {
   }
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', fontFamily: 'sans-serif' }}>
+    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
       <header>
-        <h1>Driver Hub</h1>
+        <h1 className="text-3xl font'bold underline text-blue-600">Driver Hub</h1>
         <p>Track your rideshare Earnings and productivity.</p>
       </header>
       <main>

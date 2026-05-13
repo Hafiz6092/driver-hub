@@ -1,5 +1,5 @@
 // we receive 'shifts' (the array) and 'onDelete' (the function) as props from app.jsx
-
+import { formatDate } from "../utils/formatters";
 const ShiftList = ({ shifts, onDelete}) => {
 
     // if there are no shifts, show a friendly message instead of an empty screen
@@ -31,7 +31,7 @@ const ShiftList = ({ shifts, onDelete}) => {
                 >
                     <div>
                         {/**displaying the specific properties we created in our ShiftForm object */}
-                        <strong>{shift.platform}</strong> - {shift.date} <br/>
+                        <strong>{shift.platform}</strong> - {formatDate(shift.date)} <br/>
                         <span>{shift.hours} hours | ${shift.earnings} </span>
                     </div>
                     {/**we call the onDelete and pass the specific ID of this shift */}

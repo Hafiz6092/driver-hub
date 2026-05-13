@@ -17,6 +17,7 @@ export const calculateWeeklyBreakdown = (shifts) => {
             breakdown[dayName].earnings += Number(shift.earnings || 0);
             breakdown[dayName].hours += Number(shift.hours || 0);
             breakdown[dayName].count += 1; //tracking how many shifts happened that day
+            breakdown[dayName].date = shift.date;
         }
     });
     return breakdown;

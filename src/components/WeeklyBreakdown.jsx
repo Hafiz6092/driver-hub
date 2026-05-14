@@ -1,47 +1,43 @@
 import { calculateWeeklyBreakdown } from "../utils/analytics";
 import { formatDate } from "../utils/formatters";
+
 const WeeklyBreakdown = ({shifts}) => {  
-    const stats = calculateWeeklyBreakdown(shifts);
-    const days = Object.keys(stats)
-
-    // const formatDate = (dateString) => {
-    //     if(!dateString) return "";
-    //     const [year, month, day] = dateString.split('-');
-
-    //     return `${month}/${day}/${year}`;
-    // }
+    const weeklyData = calculateWeeklyBreakdown(shifts);
+    const weekKeys = Object.keys(weeklyData).sort().reverse(); //show newest weeks first
 
     return(
-        <div className="text-lg font-bold text-slate-800 mb-4">
-            <h3 className="space-y-3">Earning by day</h3>
-            <div className="space-y-3">
-                {days.map((day)=>{
-                //if a day has no earnings, we don't render anything for it
-                const {earnings, hours, date} = stats[day];
-                const hourlyRate = hours > 0 ? (earnings / hours).toFixed(2) : 0;
+        <div className="mt-8 space-y-6">
+      {weekKeys.map((weekStart) => (
+        <div key={weekStart} className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          {/* Week Header */}
+          <h3 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2">
+            Week of {formatDate(weekStart)}
+          </h3>
 
-                if(earnings === 0) return null;
+          <div className="space-y-3">
+            {Object.keys(weeklyData[weekStart].days).map((dayName) => {
+              const { earnings, hours, date } = weeklyData[weekStart].days[dayName];
+              const hourlyRate = hours > 0 ? (earnings / hours).toFixed(2) : 0;
 
-                return(
-                    <div key={day} className = "flex justify-between items-center p-3 bg-slate-50 rounded-lg" >
-                        
-                        {/*left side: day and hours info */}
-                        <div>
-                            <span className="font-semibold text-slate-700">{day} <span className="font-normal text-slate-400 text-sm ml-1">- {formatDate(date)}</span></span>
-                            <p className="text-xs text-slate-500">{hours} total hours</p>
-                        </div>
-
-                        {/**right side: money and performance info */}
-                        <div>
-                            <span className="text-green-600 font-bold">${earnings}</span>
-                            <p className="text-xs text-blue-500">${hourlyRate}/hr avg</p>
-                        </div>
-                    </div>
-
-                );
-                })};
-            </div>
+              return (
+                <div key={date} className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                  <div>
+                    <span className="font-semibold text-slate-700">
+                      {dayName} <span className="text-xs text-slate-400 font-normal">- {formatDate(date)}</span>
+                    </span>
+                    <p className="text-xs text-slate-500">{hours} hrs</p>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-green-600 font-bold">${earnings}</span>
+                    <p className="text-xs text-blue-500">${hourlyRate}/hr</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
+      ))}
+    </div>
     );
 };
 

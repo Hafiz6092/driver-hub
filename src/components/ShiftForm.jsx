@@ -42,48 +42,67 @@ const ShiftForm = ({onAddShift}) => {
     };
     //the 'return' block is what actually renders on the screen/shows on the screen
     return (
-        <form onSubmit={handleSubmit} style={{ border: '1px solid #ccc', padding: '1rem', marginBottom: '1rem' }}>
-            <h3>Log a New Shift</h3>
-
-            <div>
-                <label>PLatform: </label>
-                {/* value connects the state to the UI; on change updates when the user types*/}
-                <select value={platform} onChange={(e) => setPlatform(e.target.value)}>
-                    <option value="Uber"> Uber</option>
-                    <option value="Lyft"> Lyft</option>
-                </select>
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
+          <h3 className="text-lg font-bold text-slate-800 mb-4">Log a New Shift</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            {/* Platform */}
+            <div className="flex flex-col space-y-1">
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Platform</label>
+              <select 
+                value={platform} 
+                onChange={(e) => setPlatform(e.target.value)}
+                className="bg-slate-50 border border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              >
+                <option value="Uber">Uber</option>
+                <option value="Lyft">Lyft</option>
+              </select>
             </div>
-            <div>
-                <label>Date: </label> {/**incase user forget to log in shifts they can pick a date and enter the data */}
-                <input
-                    type="date"
-                    value={date}
-                    onChange={(e)=> setDate(e.target.value)}
-                />
+      
+            {/* Date */}
+            <div className="flex flex-col space-y-1">
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</label>
+              <input 
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="bg-slate-50 border border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              />
             </div>
-
-            <div>
-                <label>Hours Worked: </label>
-                {/**e.target.value is the text the user just typed into the box */}
-                <input 
-                type = "number"
-                value = {hours}
+      
+            {/* Hours */}
+            <div className="flex flex-col space-y-1">
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Hours</label>
+              <input 
+                type="number"
+                value={hours}
                 onChange={(e) => setHours(e.target.value)}
-                placeholder= "e.g. 8"
-                />
+                placeholder="e.g. 8"
+                className="bg-slate-50 border border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              />
             </div>
-            <div>
-                <label>Total Earnings: </label>
-                <input
+      
+            {/* Earnings */}
+            <div className="flex flex-col space-y-1">
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Earnings ($)</label>
+              <input 
                 type="number"
                 value={earnings}
                 onChange={(e) => setEarnings(e.target.value)}
-                placeholder = "e.g. 250"
-                />
+                placeholder="e.g. 250"
+                className="bg-slate-50 border border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              />
             </div>
-            {/**Button click triggers the 'onSubmit' event in the form tag above */}
-            <button type="submit"> Add Shift</button>
+      
+            {/* Submit Button - Spans full width on small screens */}
+            <button 
+              type="submit" 
+              className="md:col-span-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors mt-2"
+            >
+              Add Shift to Log
+            </button>
+          </div>
         </form>
-    );
-};
+      );
+    };
 export default ShiftForm;

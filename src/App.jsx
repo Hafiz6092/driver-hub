@@ -5,8 +5,9 @@ import EarningsSummary from './components/EarningsSummary';
 import ShiftForm from './components/ShiftForm';
 import ShiftList from './components/ShiftList';
 import WeeklyBreakdown from './components/WeeklyBreakdown';
-
+import NavBar from './components/NavBar';
 function App() {
+  const [activePage, setActivePage] = useState('dashboard');
   //initialize state
   //we try to get data from localStorage first, if its empty we start with an empty array
   const [shifts, setShifts] = useState(()=>{
@@ -34,17 +35,25 @@ function App() {
   }
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
-      <header>
-        <h1 className="text-3xl font-bold underline text-blue-600">Driver Hub</h1>
-        <p>Track your rideshare Earnings and productivity.</p>
-      </header>
-      <main>
+    <div className="min-h-screen bg-slate-50">
+     <NavBar activePage={activePage} setActivePage={setActivePage}/>
+
+     <main className="max-w-4xl mx-auto p-4">
+      {activePage === 'dashboard' ? (
+        <>
         <EarningsSummary shifts={shifts}/>
-        <ShiftForm onAddShift={addShift}/>
-        <ShiftList shifts={shifts} onDelete={deleteShift}/>
         <WeeklyBreakdown shifts={shifts}/>
-      </main>
+        </>
+      ) : (
+        <>
+        <ShiftForm onAddShift={addShift} />
+        <ShiftList shifts ={shifts} onDelete={deleteShift}/>
+        </>
+
+      )
+    }
+
+     </main>
     </div>
   )
 }

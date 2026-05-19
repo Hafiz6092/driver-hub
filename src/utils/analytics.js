@@ -35,6 +35,7 @@ export const calculateWeeklyBreakdown = (shifts) => {
         // 3. Add the data
         weeklyData[weekStarting].days[dayName].earnings += Number(shift.earnings || 0);
         weeklyData[weekStarting].days[dayName].hours += Number(shift.hours || 0);
+        weeklyData[weekStarting].days[dayName].expenses += Number(shift.expenses || 0);
     });
 
     // 4. FIX: Return 'weeklyData', not 'breakdown' (which wasn't defined)

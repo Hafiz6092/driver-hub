@@ -7,6 +7,7 @@ const ShiftForm = ({onAddShift}) => {
     const [hours, setHours] = useState(' ');
     const [earnings, setEarnings] = useState(' ');
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+    const [expenses, setExpenses] = useState(' ');
     
 
     //this function runs when the user clicks the "add shift" button
@@ -92,6 +93,17 @@ const ShiftForm = ({onAddShift}) => {
                 placeholder="e.g. 250"
                 className="bg-slate-50 border border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
               />
+            </div>
+            <div className="flex flex-col space-y-1">
+                <label className="text-xs font-semibold text-red-500 uppercase tracking-wider"> Gas/Expenses ($)</label>
+                <input
+                type = "number"
+                value={expenses}
+                onChange = {(e) => setExpenses(e.target.value)}
+                placeholder = "e.g. 40"
+                className="bg-slate-50 border border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-red-400 outline-none"
+                />
+
             </div>
       
             {/* Submit Button - Spans full width on small screens */}

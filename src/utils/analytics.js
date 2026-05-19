@@ -28,6 +28,7 @@ export const calculateWeeklyBreakdown = (shifts) => {
             weeklyData[weekStarting].days[dayName] = { 
                 earnings: 0, // Match your UI: 'earnings' (plural)
                 hours: 0, 
+                expenses: 0,
                 date: shift.date 
             };
         }

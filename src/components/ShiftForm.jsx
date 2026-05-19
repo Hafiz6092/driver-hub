@@ -4,10 +4,10 @@ const ShiftForm = ({onAddShift}) => {
     //create local state variable for our three inputs
     //'usState' gives us the variable ane the function to change it
     const [platform, setPlatform] = useState('Uber');
-    const [hours, setHours] = useState(' ');
-    const [earnings, setEarnings] = useState(' ');
+    const [hours, setHours] = useState('');
+    const [earnings, setEarnings] = useState('');
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-    const [expenses, setExpenses] = useState(' ');
+    const [expenses, setExpenses] = useState('');
     
 
     //this function runs when the user clicks the "add shift" button
@@ -28,7 +28,7 @@ const ShiftForm = ({onAddShift}) => {
             earnings: Number(earnings),
             //auto generate today's date;
             //date: new Date().toLocaleDateString()
-
+            expenses: Number(expenses || 0),
             date: date
 
         };

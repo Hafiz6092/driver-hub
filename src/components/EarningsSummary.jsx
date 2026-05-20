@@ -8,8 +8,18 @@ const EarningsSummary = ({ shifts }) => {
         acc.gross += Number(shift.earnings || 0); // FIXED: Changed shift.earning to shift.earnings
         acc.hours += Number(shift.hours || 0);
         acc.expenses += Number(shift.expenses || 0); 
+
+        //Pull separate metrics based on the logged expense category object
+        if(shift.expenseDetails){
+            const {amount, type} = shift.expenseDetails;
+            if(type === 'Gas') acc.gas += Number(amount || 0);
+            else if (type === 'Tolls') acc.tolls += Number(amount || 0);
+            else acc.other += Number(amount || 0);
+        }else{
+            acc.gas += Number(shift.expenses || 0);
+        }
         return acc;
-    }, { gross: 0, hours: 0, expenses: 0 }); // Initial state setup starting at zero
+    }, { gross: 0, hours: 0, expenses: 0, gas:0, tolls:0, other:0}); // Initial state setup starting at zero
 
     // Financial calculations
     const netProfit = totals.gross - totals.expenses; // What you actually keep after cost
@@ -22,6 +32,10 @@ const EarningsSummary = ({ shifts }) => {
     const formattedGross = totals.gross.toLocaleString();
     const formattedExpenses = totals.expenses.toLocaleString();
     const formattedNet = netProfit.toLocaleString(); // FIXED: Removed 'totals.' and corrected spelling to 'toLocaleString'
+
+    //formatted string for subcategories
+    const formattedGas = totals.gas.toLocaleString();
+    const formattedTolls = totals.tolls.toLocaleString();
 
     return (
         // FIXED: Changed 'md:grid-col-3' to 'md:grid-cols-3'
@@ -37,7 +51,12 @@ const EarningsSummary = ({ shifts }) => {
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 group hover:border-red-500 transition-all text-center md:text-left">
                 <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">Total Expenses</p>
                 <h2 className="text-3xl font-bold text-red-600 mt-2">-${formattedExpenses}</h2>
-                <p className="text-xs text-slate-400 mt-2 italic">Gas, Tolls, Fees</p>
+
+                {/* Visual breakdowns sitting underneath the main number */}
+                <div className="flex justify-center md:justify-start space-x-4 mt-2 text-xs font-medium text-slate-500 border-t border-slate-100 pt-2">
+                    <span className="flex items-center">Gas: <strong className="text-slate-700 ml-1">${formattedGas}</strong></span>
+                    <span className="flex items-center">Tolls: <strong className="text-slate-700 ml-1">${formattedTolls}</strong></span>
+                </div>
             </div>
 
             {/* Net profit (The actual Take home pocket money) */}

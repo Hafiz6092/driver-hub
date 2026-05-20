@@ -29,6 +29,9 @@ export const calculateWeeklyBreakdown = (shifts) => {
                 earnings: 0, // Match your UI: 'earnings' (plural)
                 hours: 0, 
                 expenses: 0,
+                gas: 0,
+                tolls: 0,
+                otherExpenses: 0,
                 date: shift.date 
             };
         }
@@ -37,7 +40,19 @@ export const calculateWeeklyBreakdown = (shifts) => {
         weeklyData[weekStarting].days[dayName].earnings += Number(shift.earnings || 0);
         weeklyData[weekStarting].days[dayName].hours += Number(shift.hours || 0);
         weeklyData[weekStarting].days[dayName].expenses += Number(shift.expenses || 0);
+
+        if(shift.expenseDetails){
+            const {amount, type} = shift.expenseDetails;
+            if(type === 'Gas'){
+                weeklyData[weekStarting].days[dayName].gas += Number(amount || 0);
+            }else if(type === 'Tolls'){
+                weeklyData[weekStarting].days[dayName].tolls += Number(amount || 0);
+            }else{
+                weeklyData[weekStarting].days[dayName].otherExpenses += Number(amount || 0);
+            }
+        }
     });
+
 
     // 4. FIX: Return 'weeklyData', not 'breakdown' (which wasn't defined)
     return weeklyData;

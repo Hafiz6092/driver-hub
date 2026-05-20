@@ -10,16 +10,17 @@ const EarningsSummary = ({ shifts }) => {
         acc.expenses += Number(shift.expenses || 0); 
 
         //Pull separate metrics based on the logged expense category object
-        if(shift.expenseDetails){
-            const {amount, type} = shift.expenseDetails;
-            if(type === 'Gas') acc.gas += Number(amount || 0);
-            else if (type === 'Tolls') acc.tolls += Number(amount || 0);
-            else acc.other += Number(amount || 0);
-        }else{
+        if (shift.expenseItems && shift.expenseItems.length > 0) {
+            shift.expenseItems.forEach(item => {
+                if (item.type === 'Gas') acc.gas += item.amount;
+                else if (item.type === 'Tolls') acc.tolls += item.amount;
+            });
+        } else {
+            // Backward compatibility line
             acc.gas += Number(shift.expenses || 0);
         }
         return acc;
-    }, { gross: 0, hours: 0, expenses: 0, gas:0, tolls:0, other:0}); // Initial state setup starting at zero
+    }, { gross: 0, hours: 0, expenses: 0, gas:0, tolls:0}); // Initial state setup starting at zero
 
     // Financial calculations
     const netProfit = totals.gross - totals.expenses; // What you actually keep after cost
@@ -73,80 +74,3 @@ export default EarningsSummary;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//OLD LOGIC
-// const EarningsSummary = ({shifts}) => {
-//     /**
-//      * calculate total earnings
-//      * .reduce() takes a list and reduces it to a single number
-//      * (acc) is the accumulator the running total 
-//      * shift is the current item we are looking at
-//      */
-//     // const totalEarnings = shifts.reduce((acc, shift) =>{ 
-//     //     return acc + Number(shift.earnings || 0);
-//     // }, 0);
-//     // //calculate total hours
-//     // const totalHours = shifts.reduce((acc, shift) =>{
-//     //     return acc + Number(shift.hours || 0);
-//     // }, 0);
-
-
-
-//     //cwe only run toLocalString() is totalEarning is definitely a number
-//     const formattedEarnings = typeof totalEarnings === 'number' ?
-//     totalEarnings.toLocaleString() : '0';
-//     //calculate hourly rate 
-//     //we check if totalHours is greater than 0 to avoid 'Divided by zero' errors NaN
-
-//     const hourlyRate = totalHours > 0 ? (totalEarnings/totalHours).toFixed(2) : 0;
-//     return (
-//         <div style={{ 
-//             display: 'flex', 
-//             justifyContent: 'space-around', 
-//             backgroundColor: '#f4f4f9', 
-//             padding: '20px', 
-//             borderRadius: '12px',
-//             marginBottom: '20px',
-//             textAlign: 'center'
-//           }}>
-//             <div>
-//                 <h4>Total Earned</h4>
-//                 {/**we use .toLocalString() to add commas to large numbers */}
-//                 <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#2ecc71' }}>
-//                     ${formattedEarnings}
-//                 </p>
-//             </div>
-
-//             <div>
-//                 <h4>Total Hours</h4>
-//                 <p style={{ fontSize: '24px', fontWeight: 'bold' }}>
-//                     {totalHours}h
-//                 </p>
-//             </div>
-//             <div>
-//                 <h4>Avg. Hourly</h4>
-//                 <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#3498db' }}>
-//                     ${hourlyRate}/hr
-//                 </p>
-//             </div>
-
-//         </div>
-//     )
-// }
-// export default EarningsSummary;

@@ -1,15 +1,16 @@
 // we receive 'shifts' (the array) and 'onDelete' (the function) as props from app.jsx
 import { formatDate } from "../utils/formatters";
 import { FaTrashAlt } from "react-icons/fa";
-const ShiftList = ({ shifts, onDelete}) => {
+
+const ShiftList = ({ shifts, onDelete }) => {
 
     // if there are no shifts, show a friendly message instead of an empty screen
-    if(shifts.length === 0){
+    if (shifts.length === 0) {
         return (
             <div className="bg-slate-50 border border-dashed border-slate-200 p-8 rounded-xl text-center">
-                <p className="text-slate-500 italic">No shifts logged yet. Start by adding one above! </p>
+                <p className="text-slate-500 italic">No shifts logged yet. Start by adding one above!</p>
             </div>
-        )
+        );
     }
 
     return (
@@ -17,9 +18,8 @@ const ShiftList = ({ shifts, onDelete}) => {
           <h3 className="text-lg font-bold text-slate-800">Recent History</h3>
           
           {shifts.map((shift) => {
-              // Extract values safely, using fallback direct variables for older data compatibility
-              const expenseAmount = shift.expenseDetails ? shift.expenseDetails.amount : (shift.expenses || 0);
-              const expenseCategory = shift.expenseDetails ? shift.expenseDetails.type : 'Gas';
+              // Calculate grand expense totals dynamically
+              const totalExpenses = shift.expenses || 0;
 
               return (
                 <div key={shift.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center hover:border-blue-300 transition-colors gap-4">
@@ -27,7 +27,7 @@ const ShiftList = ({ shifts, onDelete}) => {
                   {/* Left Side: Badge and Metadata */}
                   <div className="flex items-center space-x-4">
                     {/* Platform Badge */}
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xs ${
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xs shrink-0 ${
                       shift.platform === 'Uber' ? 'bg-black' : 'bg-pink-500'
                     }`}>
                       {shift.platform}
@@ -40,7 +40,7 @@ const ShiftList = ({ shifts, onDelete}) => {
                   </div>
       
                   {/* Right Side: Financial Readouts and Actions */}
-                  <div className="flex items-center justify-between md:justify-end w-full md:w-auto space-x-6 border-t md:border-t-0 border-slate-100 pt-3 md:pt-0">
+                  <div className="flex items-center justify-between md:justify-end w-full md:w-auto space-x-6 md:space-x-6 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">
                     
                     {/* Earnings Readout */}
                     <div className="text-right">
@@ -48,14 +48,25 @@ const ShiftList = ({ shifts, onDelete}) => {
                       <p className="text-slate-400 text-xs">${(shift.earnings / shift.hours).toFixed(2)}/hr</p>
                     </div>
 
-                    {/* NEW: Explicitly formatted Categorized Expense Column */}
-                    <div className="text-right border-l border-slate-200 pl-6">
-                      <p className="text-red-500 font-semibold text-base">
-                        {expenseAmount > 0 ? `-$${expenseAmount.toLocaleString()}` : '$0'}
+                    {/* FIXED: Dynamic array loop to list Gas AND Tolls separately inside the card */}
+                    <div className="text-right border-l border-slate-200 pl-6 min-w-[110px]">
+                      <p className="text-red-500 font-bold text-base">
+                        {totalExpenses > 0 ? `-$${totalExpenses.toLocaleString()}` : '$0'}
                       </p>
-                      <p className="text-slate-400 text-xs">
-                        {expenseAmount > 0 ? `${expenseCategory === 'Gas' ? '⛽' : '🛣️'} ${expenseCategory}` : 'No Costs'}
-                      </p>
+                      
+                      {/* Check if our new multi-expense array exists */}
+                      <div className="flex flex-col text-[11px] text-slate-400 font-medium mt-0.5">
+                        {shift.expenseItems && shift.expenseItems.length > 0 ? (
+                            shift.expenseItems.map((exp, index) => (
+                                <span key={index} className="block">
+                                    {exp.type === 'Gas' ? 'Gas' : 'Tolls'} ${exp.amount.toLocaleString()}
+                                </span>
+                            ))
+                        ) : (
+                            // Safe fallback for any older single-entry test data in your browser state
+                            <span>{totalExpenses > 0 ? 'l Gas' : 'No Costs'}</span>
+                        )}
+                      </div>
                     </div>
                     
                     {/* Trash Container Button */}
@@ -73,5 +84,6 @@ const ShiftList = ({ shifts, onDelete}) => {
           })}
         </div>
     );
-}
+};
+
 export default ShiftList;

@@ -57,8 +57,8 @@ const ShiftForm = ({ onAddShift }) => {
 
     // FIXED: Corrected 'rreturn' typo down to 'return'
     return (
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8 w-full max-w-5xl mx-auto">
-          <h3 className="text-lg font-bold text-slate-800 mb-4">Log a New Shift</h3>
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-xl hover:shadow-blue-500/70 text-shadow-sm border border-slate-200 mb-8 w-full max-w-5xl mx-auto">
+          <h3 className="text-lg font-bold font-sans text-slate-800 mb-4">Log a New Shift</h3>
           
           {/* 5 columns on desktop grid layout */}
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">

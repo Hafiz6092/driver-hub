@@ -47,8 +47,8 @@ const WeatherCard = () => {
   }, [supportsGeolocation]);
 
   return (
-    <section className="h-full overflow-hidden rounded-2xl border border-sky-200 bg-gradient-to-r from-sky-600 via-cyan-500 to-emerald-400 p-6 text-white shadow-sm">
-      <div className="flex h-full flex-col gap-5">
+    <section className="h-full overflow-hidden rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-700 via-blue-600 to-sky-400 p-6 text-white shadow-xl hover:shadow-blue-500/70 text-left">
+      <div className="flex h-full flex-col gap-5 ">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-sky-100">
             Driving Weather

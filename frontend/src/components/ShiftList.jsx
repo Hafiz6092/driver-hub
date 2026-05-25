@@ -15,14 +15,14 @@ const ShiftList = ({ shifts, onDelete }) => {
 
     return (
         <div className="space-y-4">
-          <h3 className="text-lg font-bold text-slate-800">Recent History</h3>
+          <h3 className="text-xl font-bold font-sans text-slate-800 text-shadow-md">Recent History</h3>
           
           {shifts.map((shift) => {
               // Calculate grand expense totals dynamically
               const totalExpenses = shift.expenses || 0;
 
               return (
-                <div key={shift.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center hover:border-blue-300 transition-colors gap-4">
+                <div key={shift.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-xl text-shadow-xs hover:shadow-blue-500 flex flex-col md:flex-row justify-between items-start md:items-center hover:border-blue-300 transition-colors gap-4">
                   
                   {/* Left Side: Badge and Metadata */}
                   <div className="flex items-center space-x-4">
@@ -75,7 +75,7 @@ const ShiftList = ({ shifts, onDelete }) => {
                       className="p-2 text-slate-400 hover:text-red-500 transition-colors ml-2"
                       title="Delete Shift"
                     >
-                      <FaTrashAlt className="text-lg" />
+                      <FaTrashAlt className="text-lg " />
                     </button>
                   </div>
 

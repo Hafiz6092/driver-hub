@@ -6,6 +6,7 @@ import ShiftList from './components/ShiftList';
 import WeeklyBreakdown from './components/WeeklyBreakdown';
 import NavBar from './components/NavBar';
 import WeatherCard from './components/WeatherCard';
+import AIWeeklyInsights from './components/AIWeeklyInsights';
 
 function App() {
   const [activePage, setActivePage] = useState('dashboard');
@@ -36,8 +37,9 @@ function App() {
           <>
             <section className="mb-8 grid grid-cols-1 gap-6 xl:grid-cols-2 xl:items-stretch">
               <WeatherCard />
-              <EarningsSummary shifts={shifts} layout="stacked" />
+              <EarningsSummary shifts={shifts} />
             </section>
+            <AIWeeklyInsights shifts={shifts} />
             <WeeklyBreakdown shifts={shifts} />
           </>
         ) : (

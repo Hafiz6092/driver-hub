@@ -1,6 +1,7 @@
 import { FaBusinessTime, FaCarSide, FaRegCalendarAlt } from 'react-icons/fa';
 import { IoHome } from 'react-icons/io5';
 
+// Keep nav metadata in one place so the button UI can be mapped out below.
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: IoHome },
   { id: 'shifts', label: 'Shift Log', icon: FaBusinessTime },
@@ -11,6 +12,7 @@ const NavBar = ({ activePage, setActivePage }) => {
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-slate-100/90 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
+        {/* Brand area on the left */}
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-400 text-white shadow-lg shadow-blue-500/30">
             <FaCarSide className="text-2xl" />
@@ -26,6 +28,7 @@ const NavBar = ({ activePage, setActivePage }) => {
           </div>
         </div>
 
+        {/* Page buttons on the right */}
         <nav className="rounded-2xl border border-slate-200 bg-white/90 p-1.5 shadow-lg shadow-slate-200/70">
           <div className="flex items-center gap-1">
             {navItems.map(({ id, label, icon: Icon }) => {

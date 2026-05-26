@@ -1,7 +1,6 @@
-// we receive 'shifts' (the array) and 'onDelete' (the function) as props from app.jsx
-import { formatDate } from '../utils/formatters';
-import { sortShiftsByMostRecent } from '../utils/analytics';
 import { FaTrashAlt } from 'react-icons/fa';
+import { sortShiftsByMostRecent } from '../utils/analytics';
+import { formatDate } from '../utils/formatters';
 
 const ShiftList = ({
   shifts,
@@ -10,7 +9,10 @@ const ShiftList = ({
   title = 'Recent History',
   emptyMessage = 'No shifts logged yet. Start by adding one above!'
 }) => {
+  // Start by sorting newest-to-oldest so every page uses the same order.
   const sortedShifts = sortShiftsByMostRecent(shifts);
+
+  // Some pages want the full history and some only want a preview.
   const visibleShifts = typeof limit === 'number' ? sortedShifts.slice(0, limit) : sortedShifts;
 
   if (visibleShifts.length === 0) {
@@ -26,6 +28,7 @@ const ShiftList = ({
       <h3 className="text-xl font-bold font-sans text-slate-800 text-shadow-md">{title}</h3>
 
       {visibleShifts.map((shift) => {
+        // totalExpenses is shown as the red number on the right side of the card.
         const totalExpenses = shift.expenses || 0;
 
         return (
@@ -33,6 +36,7 @@ const ShiftList = ({
             key={shift.id}
             className="bg-white p-4 rounded-xl border border-slate-200 shadow-xl text-shadow-xs hover:shadow-blue-500 shadow-blue-500/70 flex flex-col md:flex-row justify-between items-start md:items-center hover:border-blue-300 transition-colors gap-4"
           >
+            {/* Left block: rideshare badge + date/hour info */}
             <div className="flex items-center space-x-4">
               <div
                 className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xs shrink-0 ${
@@ -48,6 +52,7 @@ const ShiftList = ({
               </div>
             </div>
 
+            {/* Right block: money details + delete button */}
             <div className="flex items-center justify-between md:justify-end w-full md:w-auto space-x-6 md:space-x-6 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">
               <div className="text-right">
                 <p className="text-green-600 font-bold text-lg">${shift.earnings.toLocaleString()}</p>
@@ -59,6 +64,7 @@ const ShiftList = ({
                   {totalExpenses > 0 ? `-$${totalExpenses.toLocaleString()}` : '$0'}
                 </p>
 
+                {/* Newer entries store expenses as an array, so list each line item when possible. */}
                 <div className="flex flex-col text-[11px] text-slate-400 font-medium mt-0.5">
                   {shift.expenseItems && shift.expenseItems.length > 0 ? (
                     shift.expenseItems.map((exp, index) => (

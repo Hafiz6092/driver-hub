@@ -1,19 +1,25 @@
-import { useEffect, useState } from "react";
-import { FaCloudSun, FaLocationArrow, FaTemperatureHigh } from "react-icons/fa";
-import { fetchWeather } from "../utils/weather";
+import { useEffect, useState } from 'react';
+import { FaCloudSun, FaLocationArrow, FaTemperatureHigh } from 'react-icons/fa';
+import { fetchWeather } from '../utils/weather';
 
 const WeatherCard = () => {
+  // If geolocation does not exist, we know up front that weather cannot load.
   const supportsGeolocation =
-    typeof navigator !== "undefined" && Boolean(navigator.geolocation);
+    typeof navigator !== 'undefined' && Boolean(navigator.geolocation);
 
+  // weather holds the live data returned from the weather utility.
   const [weather, setWeather] = useState(null);
-  const [status, setStatus] = useState(() => (supportsGeolocation ? "loading" : "error"));
+
+  // status controls which UI state we render: loading, success, or error.
+  const [status, setStatus] = useState(() => (supportsGeolocation ? 'loading' : 'error'));
+
+  // message is only used for loading/error copy.
   const [message, setMessage] = useState(() => {
     if (!supportsGeolocation) {
-      return "Geolocation is not supported in this browser.";
+      return 'Geolocation is not supported in this browser.';
     }
 
-    return "Checking local driving weather...";
+    return 'Checking local driving weather...';
   });
 
   useEffect(() => {
@@ -21,24 +27,27 @@ const WeatherCard = () => {
       return;
     }
 
+    // When location succeeds, pass the coordinates into the weather helper.
     const handleSuccess = async ({ coords }) => {
       const weatherData = await fetchWeather(coords.latitude, coords.longitude);
 
       if (!weatherData) {
-        setStatus("error");
-        setMessage("Weather data is unavailable right now.");
+        setStatus('error');
+        setMessage('Weather data is unavailable right now.');
         return;
       }
 
       setWeather(weatherData);
-      setStatus("success");
+      setStatus('success');
     };
 
+    // If the browser blocks location, fall back to a helpful message.
     const handleError = () => {
-      setStatus("error");
-      setMessage("Allow location access to see weather for your area.");
+      setStatus('error');
+      setMessage('Allow location access to see weather for your area.');
     };
 
+    // maximumAge lets the browser reuse a recent location for a short window.
     navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
       enableHighAccuracy: false,
       timeout: 10000,
@@ -49,6 +58,7 @@ const WeatherCard = () => {
   return (
     <section className="h-full overflow-hidden rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-700 via-blue-600 to-sky-400 p-6 text-white shadow-xl hover:shadow-blue-500 shadow-blue-500/70 text-left">
       <div className="flex h-full flex-col gap-5 ">
+        {/* Card intro */}
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-sky-100">
             Driving Weather
@@ -60,8 +70,9 @@ const WeatherCard = () => {
         </div>
 
         <div className="min-w-full rounded-2xl bg-white/15 p-4 backdrop-blur-sm md:min-w-[320px]">
-          {status === "success" && weather ? (
+          {status === 'success' && weather ? (
             <div className="space-y-3">
+              {/* Top line: location label + current temperature */}
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wider text-sky-100">
@@ -75,6 +86,7 @@ const WeatherCard = () => {
                 </div>
               </div>
 
+              {/* Detail boxes: conditions, description, feels like, and wind */}
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div className="rounded-xl bg-black/10 p-3">
                   <p className="flex items-center gap-2 text-sky-100">
@@ -104,6 +116,7 @@ const WeatherCard = () => {
               </div>
             </div>
           ) : (
+            // Same box structure, but used for loading and error states.
             <div className="flex items-start gap-3 rounded-xl bg-black/10 p-4 text-sm">
               <FaLocationArrow className="mt-0.5 shrink-0 text-base text-sky-100" />
               <p className="font-medium text-white">{message}</p>

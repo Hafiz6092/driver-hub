@@ -1,13 +1,12 @@
 import { generateWeeklyInsights } from '../utils/analytics';
 
 const AIWeeklyInsights = ({ shifts }) => {
+  // Convert raw shift data into short readable insight strings.
   const insights = generateWeeklyInsights(shifts);
 
   return (
-    /* Changed mb-8 to h-full so it fills the 2x2 grid column evenly */
     <section className="h-full rounded-2xl border border-indigo-200 bg-white p-6 shadow-xl hover:shadow-blue-500 shadow-blue-500/70 text-shadow-sm flex flex-col">
-      
-      {/* Changed to a clean vertical stack layout centered on the left */}
+      {/* Header copy explains what this card is and where the text comes from. */}
       <div className="flex flex-col gap-1.5 border-b border-slate-100 pb-4 text-left">
         <p className="text-xs font-semibold font-mono uppercase tracking-[0.25em] text-indigo-500">
           AI Weekly Insights
@@ -20,7 +19,7 @@ const AIWeeklyInsights = ({ shifts }) => {
         </p>
       </div>
 
-      {/* Insights List Container */}
+      {/* Each item is just a sentence, so we map over the insight array and render one card per line. */}
       <div className="mt-5 grid grid-cols-1 gap-3 font-serif">
         {insights.map((insight, index) => (
           <div

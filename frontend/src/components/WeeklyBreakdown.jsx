@@ -8,8 +8,14 @@ const WeeklyBreakdown = ({
   emptyMessage = 'No weekly shift data yet.',
   className = 'mt-8 space-y-4'
 }) => {
+  // Build the full grouped weekly structure once for this render.
   const weeklyData = calculateWeeklyBreakdown(shifts);
+
+  // Sort newest weeks first so the freshest data shows up at the top.
   const availableWeekKeys = Object.keys(weeklyData).sort().reverse();
+
+  // Some screens only want a filtered week list, like the busiest week on the dashboard.
+  // If no filter is passed in, we just show every available week.
   const weekKeys = Array.isArray(weekStarts) && weekStarts.length > 0
     ? availableWeekKeys.filter((weekStart) => weekStarts.includes(weekStart))
     : availableWeekKeys;

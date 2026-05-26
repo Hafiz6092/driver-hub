@@ -1,15 +1,32 @@
-import { calculateWeeklyBreakdown } from "../utils/analytics";
-import { formatDate } from "../utils/formatters";
+import { calculateWeeklyBreakdown } from '../utils/analytics';
+import { formatDate } from '../utils/formatters';
 
-const WeeklyBreakdown = ({shifts}) => {  
-    const weeklyData = calculateWeeklyBreakdown(shifts);
-    const weekKeys = Object.keys(weeklyData).sort().reverse(); //show newest weeks first
+const WeeklyBreakdown = ({
+  shifts,
+  weekStarts,
+  title = 'Weekly Breakdown',
+  emptyMessage = 'No weekly shift data yet.',
+  className = 'mt-8 space-y-4'
+}) => {
+  const weeklyData = calculateWeeklyBreakdown(shifts);
+  const availableWeekKeys = Object.keys(weeklyData).sort().reverse();
+  const weekKeys = Array.isArray(weekStarts) && weekStarts.length > 0
+    ? availableWeekKeys.filter((weekStart) => weekStarts.includes(weekStart))
+    : availableWeekKeys;
 
-    return(
-        <div className="mt-8 space-y-6">
+  if (weekKeys.length === 0) {
+    return (
+      <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center">
+        <p className="text-slate-500 italic">{emptyMessage}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className={className}>
+      <h3 className="text-2xl font-bold text-slate-800">{title}</h3>
       {weekKeys.map((weekStart) => (
         <div key={weekStart} className="bg-white p-6 rounded-xl shadow-xl text-shadow-sm hover:shadow-blue-500 shadow-blue-500/70 border border-slate-200">
-          {/* Week Header */}
           <h3 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2">
             Week of {formatDate(weekStart)}
           </h3>
@@ -38,7 +55,7 @@ const WeeklyBreakdown = ({shifts}) => {
         </div>
       ))}
     </div>
-    );
+  );
 };
 
 export default WeeklyBreakdown;

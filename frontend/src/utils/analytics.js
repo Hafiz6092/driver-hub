@@ -34,10 +34,22 @@ const getExpenseTotals = (shift) => {
     };
 };
 
+export const sortShiftsByMostRecent = (shifts) => {
+    return [...shifts].sort((a, b) => {
+        const dateCompare = new Date(b.date) - new Date(a.date);
+
+        if (dateCompare !== 0) {
+            return dateCompare;
+        }
+
+        return Number(b.id || 0) - Number(a.id || 0);
+    });
+};
+
 export const calculateWeeklyBreakdown = (shifts) => {
     const weeklyData = {};
 
-    shifts.forEach(shift => {
+    shifts.forEach((shift) => {
         const weekStarting = getStartOfWeek(shift.date);
         const dateObj = new Date(shift.date);
         const dayName = DAYS[dateObj.getDay()];
@@ -46,9 +58,12 @@ export const calculateWeeklyBreakdown = (shifts) => {
         if (!weeklyData[weekStarting]) {
             weeklyData[weekStarting] = {
                 weekLabel: weekStarting,
+                shiftCount: 0,
                 days: {}
             };
         }
+
+        weeklyData[weekStarting].shiftCount += 1;
 
         if (!weeklyData[weekStarting].days[dayName]) {
             weeklyData[weekStarting].days[dayName] = {
@@ -71,6 +86,34 @@ export const calculateWeeklyBreakdown = (shifts) => {
     });
 
     return weeklyData;
+};
+
+export const getWeekWithMostShifts = (shifts) => {
+    const weeklyData = calculateWeeklyBreakdown(shifts);
+    const weekKeys = Object.keys(weeklyData);
+
+    if (weekKeys.length === 0) {
+        return null;
+    }
+
+    return weekKeys.reduce((bestWeek, currentWeek) => {
+        if (!bestWeek) {
+            return currentWeek;
+        }
+
+        const bestCount = weeklyData[bestWeek].shiftCount || 0;
+        const currentCount = weeklyData[currentWeek].shiftCount || 0;
+
+        if (currentCount > bestCount) {
+            return currentWeek;
+        }
+
+        if (currentCount === bestCount && currentWeek > bestWeek) {
+            return currentWeek;
+        }
+
+        return bestWeek;
+    }, null);
 };
 
 export const generateWeeklyInsights = (shifts) => {

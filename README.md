@@ -1,85 +1,172 @@
 # Driver Hub
 
-Driver Hub is a dedicated full-stack web application designed for rideshare drivers to track shifts, manage subcategorized expenses, and analyze clear financial analytics across multiple platforms like Uber and Lyft. The application helps drivers optimize their working schedules by providing visual breakdowns of gross revenues, net take-home pay, and operational costs.
+Driver Hub is a React + Vite web app for rideshare drivers who want a simple way to log shifts, track expenses, review weekly performance, and spot patterns in their work.
 
-## Core Features
+The app is built as a frontend-only project and stores data in the browser with `localStorage`, so it runs without a backend database.
 
-* **Multi-Platform Log Management:** Dynamically input and organize shifts by date, duration, platform selection, and exact earnings.
-* **Granular Expense Subcategorization:** Track operational expenses separated directly into gas costs and road toll charges inside each log card.
-* **Real-time Financial Analytics:** A dashboard passport rendering automatic computations for gross revenues, total expenses, net profits, and average hourly metrics.
-* **Weekly Performance Breakdown:** Dynamic structural sorting compiling log objects into readable weekly calendars tracking active day rates and trends.
-* **Persistent Browser Storage:** Built-in `localStorage` integration automatically syncing shift modifications directly onto the browser to ensure zero data loss upon tab reloads.
+## Features
+
+- Dashboard with a 2-column layout
+- Live local weather card using browser geolocation and Open-Meteo
+- Earnings summary showing gross revenue, total expenses, gas, tolls, and net profit
+- AI-style weekly insights generated from logged shift data
+- Busiest week view on the dashboard, showing only the week with the most logged shifts
+- Shift logging form for Uber and Lyft entries
+- Recent shift preview that shows only the 3 most recently logged shifts on the Shift Log page
+- Records page showing all logged shifts and all recorded weeks
+- Delete shift functionality
+- Persistent browser storage using `localStorage`
+
+## Pages
+
+### Dashboard
+The dashboard is the main overview page. It shows:
+
+- Weather
+- Earnings summary
+- AI weekly insights
+- The single busiest week in your log history
+
+### Shift Log
+The Shift Log page is used for adding new shifts. It shows:
+
+- Shift entry form
+- The 3 most recent shifts only
+
+### Records
+The Records page is the full archive view. It shows:
+
+- All logged shifts
+- All weekly breakdowns
+
+## Shift Data Tracked
+Each shift can store:
+
+- Platform (`Uber` or `Lyft`)
+- Date
+- Hours worked
+- Earnings
+- Gas cost
+- Tolls cost
+- Total expenses
 
 ## Tech Stack
 
-* **Frontend Framework:** React (Vite)
-* **Styling Engine:** Tailwind CSS
-* **Icons:** React Icons (`react-icons/fa6`, `react-icons/io5`)
-* **State Persistence:** LocalStorage API
+- React 19
+- Vite 8
+- Tailwind CSS 4
+- React Icons
+- Open-Meteo API
 
-## File Structure
+## Project Structure
 
 ```text
-frontend/
-├── src/
-│   ├── components/
-│   │   ├── EarningsSummary.jsx   # Metrics panels calculating gross, net, and hourly averages
-│   │   ├── NavBar.jsx            # Top panel navigation bar switching dashboard views
-│   │   ├── ShiftForm.jsx         # Form component supporting granular expense inputs
-│   │   ├── ShiftList.jsx         # Component rendering individual log objects and removal controls
-│   │   └── WeeklyBreakdown.jsx   # Grouped summary view sorting historical logs into calendar weeks
-│   ├── utils/
-│   │   ├── analytics.js          # Computes weekly groupings and chronological tracking
-│   │   └── formatters.js         # Standardizes timestamp outputs and decimal presentations
-│   ├── App.jsx                   # Central state machine orchestrating data transformations
-│   ├── App.css                   # Global layout rules and responsive overrides
-│   └── main.jsx                  # Main entry point mounting the React DOM
-
+src/
+  components/
+    AIWeeklyInsights.jsx
+    EarningsSummary.jsx
+    NavBar.jsx
+    RecordsOverview.jsx
+    ShiftForm.jsx
+    ShiftList.jsx
+    WeatherCard.jsx
+    WeeklyBreakdown.jsx
+  utils/
+    analytics.js
+    formatters.js
+    weather.js
+  App.jsx
 ```
 
-## Setup and Installation
+## How It Works
 
-Follow these steps to run the frontend application locally on your computer:
+### Weather
+The app uses browser geolocation to get the user's location and then calls Open-Meteo to show current local weather conditions.
 
-1. **Clone the Repository:**
-```bash
-git clone <repository-url>
-cd driver-hub-app/driver-hub-1/frontend
+### Weekly Analytics
+Weekly data is grouped by the start of the week. The app calculates:
 
-```
+- Earnings by day
+- Hours by day
+- Expenses by day
+- Gas and toll totals
+- Which week has the most shifts
 
+### AI Weekly Insights
+The AI insights section is rule-based and generated locally from the user's shift history. It highlights patterns such as:
 
-2. **Install Dependencies:**
+- Best earning day
+- Strongest platform by hourly average
+- Weekly take-home pace
+- Whether gas or tolls are having a larger impact on profit
+
+## Getting Started
+
+### 1. Install dependencies
+
 ```bash
 npm install
-
 ```
 
+### 2. Start the development server
 
-3. **Launch the Development Server:**
 ```bash
 npm run dev
-
 ```
 
+### 3. Build for production
 
-4. **Open Your Browser:**
-Navigate to the local address provided by your terminal interface (typically `http://localhost:5173`) to view the application live.
+```bash
+npm run build
+```
 
-## Component Architecture Workflow
+### 4. Preview the production build
 
-1. **Data Ingestion (`ShiftForm.jsx`):** Captures individual variables for platform types, total operating times, revenue totals, and segregated cost points.
-2. **State Elevation (`App.jsx`):** Formulates single objects assigned a unique tracking timestamp before prepending the configuration into the central `shifts` array.
-3. **Data Persistency (`App.jsx`):** Activates a `useEffect` hook listening to array modifications to stringify and store data inside your browser space instantly.
-4. **Data Aggregation (`EarningsSummary.jsx`):** Employs standard JavaScript array methods like `.reduce()` to cleanly summarize complete monetary lists in a single loop execution.
+```bash
+npm run preview
+```
+
+## Linting
+
+```bash
+npm run lint
+```
+
+## Data Storage
+
+This project currently stores all shift data in the browser using:
+
+- `localStorage`
+
+Because of that:
+
+- data stays on the same browser/device
+- clearing browser storage will remove saved shifts
+- there is no login or cloud sync yet
+
+## Future Improvements
+
+Possible next upgrades for the project:
+
+- Real AI summaries using an API
+- Weather saved per shift for weather-vs-earnings analysis
+- Charts for weekly and monthly earnings
+- Mileage tracking
+- Export to CSV or PDF
+- Driver account system with cloud storage
 
 ## Deployment
 
 This project is deployed on Vercel.
-[View Driver Hub Live](driver-hub-seven.vercel.app) 
+[View Driver Hub Live](https://driver-hub-seven.vercel.app) 
 
 ## Notes
 
 - Shift data is stored in browser localStorage
 - No backend or database is required
 - Weather uses Open-Meteo and browser geolocation
+
+## Author Notes
+
+This project is a strong example of a practical productivity app for gig drivers. It combines logging, analytics, weather context, and AI-style insights in a clean frontend workflow.
+

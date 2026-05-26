@@ -22,7 +22,7 @@ const ShiftList = ({ shifts, onDelete }) => {
               const totalExpenses = shift.expenses || 0;
 
               return (
-                <div key={shift.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-xl text-shadow-xs hover:shadow-blue-500 flex flex-col md:flex-row justify-between items-start md:items-center hover:border-blue-300 transition-colors gap-4">
+                <div key={shift.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-xl text-shadow-xs hover:shadow-blue-500 shadow-blue-500/70 flex flex-col md:flex-row justify-between items-start md:items-center hover:border-blue-300 transition-colors gap-4">
                   
                   {/* Left Side: Badge and Metadata */}
                   <div className="flex items-center space-x-4">

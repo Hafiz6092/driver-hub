@@ -8,7 +8,7 @@ const WeeklyBreakdown = ({shifts}) => {
     return(
         <div className="mt-8 space-y-6">
       {weekKeys.map((weekStart) => (
-        <div key={weekStart} className="bg-white p-6 rounded-xl shadow-xl text-shadow-sm hover:shadow-blue-500/70 border border-slate-200">
+        <div key={weekStart} className="bg-white p-6 rounded-xl shadow-xl text-shadow-sm hover:shadow-blue-500 shadow-blue-500/70 border border-slate-200">
           {/* Week Header */}
           <h3 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2">
             Week of {formatDate(weekStart)}

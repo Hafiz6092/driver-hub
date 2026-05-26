@@ -42,14 +42,14 @@ const EarningsSummary = ({ shifts }) => {
         // FIXED: Changed 'md:grid-col-3' to 'md:grid-cols-3'
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {/* Gross revenue total money brought in */}
-            <div className="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 group hover:shadow-blue-500/70 hover:text-shadow-md transition-all text-center md:text-left">
+            <div className="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 group shadow-blue-500/70 hover:shadow-blue-500 text-shadow-md transition-all text-center md:text-left">
                 <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">Gross Revenue</p>
                 <h2 className="text-3xl font-bold text-slate-800 mt-2">${formattedGross}</h2>
                 <p className="text-xs text-blue-500 mt-2 font-semibold">${avgHourlyGross}/hr gross</p>
             </div>
 
             {/* Total losses/expenses (Gas, maintenance, tolls) */}
-            <div className="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 group hover:shadow-red-200 hover:text-shadow-md transition-all text-center md:text-left">
+            <div className="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 group shadow-red-500/70 hover:shadow-red-500 text-shadow-md transition-all text-center md:text-left">
                 <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">Total Expenses</p>
                 <h2 className="text-3xl font-bold text-red-600 mt-2">-${formattedExpenses}</h2>
 
@@ -61,7 +61,7 @@ const EarningsSummary = ({ shifts }) => {
             </div>
 
             {/* Net profit (The actual Take home pocket money) */}
-            <div className="bg-white p-6 rounded-2xl shadow-xl border border-green-100 bg-green-50/30 group hover:bg-green-50 hover:shadow-green-100 hover:text-shadow-md transition-all text-center md:text-left">
+            <div className="bg-white p-6 rounded-2xl shadow-xl border border-green-100 bg-green-50/30 group hover:bg-green-50 hover:shadow-green-200 shadow-green-100 hover:text-shadow-md transition-all text-center md:text-left">
                 <p className="text-sm font-medium text-green-700 uppercase tracking-wider">Net Profit (Take Home)</p>
                 <h2 className="text-3xl font-bold text-green-600 mt-2">${formattedNet}</h2>
                 <p className="text-xs text-green-700 mt-2 font-bold">${avgHourlyNet}/hr net</p>

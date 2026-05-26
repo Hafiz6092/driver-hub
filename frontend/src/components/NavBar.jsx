@@ -5,7 +5,7 @@ import { FaBusinessTime } from "react-icons/fa";
 const NavBar = ({ activePage, setActivePage }) => {
   return (
     // Fixed height h-16 (64px) ensures the bar doesn't grow if text changes
-    <nav className="h-16 bg-white shadow-sm border-b border-slate-200 w-full overflow-hidden">
+    <nav className="h-16 bg-white shadow-lg shadow-blue-500/70 border-b border-slate-200 w-full overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 h-full">
         {/* items-center keeps everything vertically aligned in the middle of the 64px */}
         <div className="flex items-center h-full space-x-8">

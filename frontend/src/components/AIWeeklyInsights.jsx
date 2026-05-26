@@ -5,7 +5,7 @@ const AIWeeklyInsights = ({ shifts }) => {
 
   return (
     /* Changed mb-8 to h-full so it fills the 2x2 grid column evenly */
-    <section className="h-full rounded-2xl border border-indigo-200 bg-white p-6 shadow-xl hover:shadow-blue-500/70 text-shadow-sm flex flex-col">
+    <section className="h-full rounded-2xl border border-indigo-200 bg-white p-6 shadow-xl hover:shadow-blue-500 shadow-blue-500/70 text-shadow-sm flex flex-col">
       
       {/* Changed to a clean vertical stack layout centered on the left */}
       <div className="flex flex-col gap-1.5 border-b border-slate-100 pb-4 text-left">

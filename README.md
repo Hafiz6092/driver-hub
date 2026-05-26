@@ -72,3 +72,14 @@ Navigate to the local address provided by your terminal interface (typically `ht
 2. **State Elevation (`App.jsx`):** Formulates single objects assigned a unique tracking timestamp before prepending the configuration into the central `shifts` array.
 3. **Data Persistency (`App.jsx`):** Activates a `useEffect` hook listening to array modifications to stringify and store data inside your browser space instantly.
 4. **Data Aggregation (`EarningsSummary.jsx`):** Employs standard JavaScript array methods like `.reduce()` to cleanly summarize complete monetary lists in a single loop execution.
+
+## Deployment
+
+This project is deployed on Vercel.
+[View Driver Hub Live](driver-hub-seven.vercel.app) 
+
+## Notes
+
+- Shift data is stored in browser localStorage
+- No backend or database is required
+- Weather uses Open-Meteo and browser geolocation

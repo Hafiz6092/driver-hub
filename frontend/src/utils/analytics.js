@@ -1,3 +1,5 @@
+import { GoogleGenAI } from '@google/genai';
+
 // Every weekly calculation in the app uses Monday as the start of the week.
 const getStartOfWeek = (dateString) => {
   const date = new Date(dateString);
@@ -5,7 +7,7 @@ const getStartOfWeek = (dateString) => {
 
   // Sunday is 0 in JavaScript, so it needs a custom adjustment here.
   const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-  const monday = new Date(date.setDate(diff));
+  const monday = new Date(new Date(date).setDate(diff));
   return monday.toISOString().split('T')[0];
 };
 
@@ -168,7 +170,7 @@ export const generateWeeklyInsights = (shifts) => {
     const earnings = Number(shift.earnings || 0);
 
     if (!best || earnings > best.earnings) {
-      return { dayName, earnings };
+      return { dayName, earnings, date: shift.date };
     }
 
     return best;
@@ -224,7 +226,7 @@ export const generateWeeklyInsights = (shifts) => {
 
   if (bestDay) {
     insights.push(
-      `Your best single earning day so far was ${bestDay.dayName}, bringing in $${bestDay.earnings.toLocaleString()}.`
+      `Your best single earning day so far was ${bestDay.dayName} (${bestDay.date}), bringing in $${bestDay.earnings.toLocaleString()}.`
     );
   }
 
@@ -250,4 +252,98 @@ export const generateWeeklyInsights = (shifts) => {
 
   // Keep the card short enough to scan quickly.
   return insights.slice(0, 4);
+};
+
+// Returns an accurate, month-specific demand narrative instead of a single
+// hardcoded "it's summer" story. monthIndex is 0-11 (JS Date getMonth()).
+const getSeasonalDemandContext = (monthIndex) => {
+  if (monthIndex === 11 || monthIndex === 0 || monthIndex === 1) {
+    const isHolidayStretch = monthIndex === 11;
+    return isHolidayStretch
+      ? `It's the holiday season, historically one of the busiest stretches of the year. Expect strong demand from holiday shopping, parties, and travel, with New Year's Eve typically the single biggest earning night. Airport runs are more consistent due to holiday travel.`
+      : `It's the post-holiday period (Jan/Feb). Demand often dips after New Year's as spending slows down, but cold, snowy, or icy conditions can create reliable surges since riders avoid walking or transit. Watch for winter weather spikes.`;
+  }
+
+  if (monthIndex >= 2 && monthIndex <= 4) {
+    return `It's spring. Demand is generally moderate and trending upward as the weather improves and event/travel activity picks back up. Watch for demand bumps around spring events, graduations, and improving weather driving people back out at night.`;
+  }
+
+  if (monthIndex >= 5 && monthIndex <= 7) {
+    return `It's summer, historically one of the slower stretches for rideshare in most markets. School is out (fewer campus trips), many riders travel or work remotely, and corporate commuting dips. Airport runs may be less consistent. Evening/weekend trips and beach or event-adjacent areas tend to hold up better than weekday commute hours.`;
+  }
+
+  return `It's fall. Demand typically picks back up as school and work routines resume and commuting normalizes. Expect steadier weekday demand, with a ramp toward the holiday season starting in November.`;
+};
+
+/**
+ * Feeds chat log, live weather data, and NYC regional traffic conditions to Gemini
+ *
+ * SECURITY NOTE: `apiKey` must never be a key that is shipped to the browser.
+ * If this function is called directly from client-side React code with a key
+ * bundled into the frontend, that key is visible to anyone via devtools/network
+ * tab and can be extracted and abused. Instead, this function should run on a
+ * backend/server route (e.g. an API endpoint your React app calls), with the
+ * Gemini API key read from a server-side environment variable. The client
+ * should only ever call your own backend endpoint, never the Gemini API directly.
+ */
+export const askDriverAssistant = async (userMessage, chatHistory, shifts, apiKey, currentWeatherData = null) => {
+  const ai = new GoogleGenAI({ apiKey });
+
+  const today = new Date();
+  const currentMonthName = today.toLocaleString('default', { month: 'long' });
+  const currentDayOfWeek = DAYS[today.getDay()];
+  const formattedDate = today.toISOString().split('T')[0];
+  const seasonalDemandContext = getSeasonalDemandContext(today.getMonth());
+
+  const historySummary = shifts.map(s =>
+    `Date: ${s.date}, Platform: ${s.platform}, Hours: ${s.hours}, Earnings: $${s.earnings}, Expenses: $${s.expenses}`
+  ).join('\n');
+
+  const systemInstruction = `
+    You are "Driver Hub AI", a tactical and direct assistant for NYC rideshare drivers.
+
+    ENVIRONMENT METRICS:
+    - Current Date: ${formattedDate} (${currentDayOfWeek}, Month of ${currentMonthName})
+    - Seasonal Demand Context: ${seasonalDemandContext}
+
+    CRITICAL BEHAVIOR RULES:
+    1. IF THE DRIVER ASKS ABOUT WEATHER CONDITIONS OR CURRENT DRIVING CONDITIONS FOR TODAY:
+       - You MUST explicitly direct them to look at the specialized Weather Card located right above on their dashboard interface.
+       - Politely inform them that the most accurate, real-time local weather stats (temperature, precipitation, wind speeds) are actively displayed in that panel for their convenience.
+       - Do NOT invent or hallucinate custom weather metrics.
+    2. If the driver asks "How's work today?", "Is it busy?", or about seasonal demand:
+       - Use the "Seasonal Demand Context" above as the factual basis for your answer. Give concrete, actionable advice (e.g. target areas, times of day, or event-driven opportunities) based on that context.
+    3. If the driver asks about NYC traffic conditions or driving status:
+       - Provide actionable insights into NYC's chronic bottlenecks. Detail typical trouble spots based on the time of day: outer borough bridge crossways (BQE, Midtown Tunnel lines, George Washington upper levels) and Manhattan core grids (FDR Drive, West Side Highway delays, and cross-streets 34th/42nd blocks). Tell them to check their turn-by-turn navigation overlay (Waze/Google Maps) for immediate blockages. Do not claim to know live incident data yourself.
+
+    DRIVER LOG METRICS CURRENTLY AVAILABLE:
+    ${shifts.length === 0 ? "No records recorded yet." : historySummary}
+  `;
+
+  const formattedContents = [
+    ...chatHistory.map(msg => ({
+      role: msg.sender === 'user' ? 'user' : 'model',
+      parts: [{ text: msg.text }]
+    })),
+    {
+      role: 'user',
+      parts: [{ text: userMessage }]
+    }
+  ];
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: formattedContents,
+      config: {
+        systemInstruction: systemInstruction,
+        temperature: 0.6,
+      }
+    });
+
+    return response.text;
+  } catch (error) {
+    console.error("Gemini Assistant Error:", error);
+    return "Sorry, I ran into an error pulling those insights. Double check your API connection and try again.";
+  }
 };

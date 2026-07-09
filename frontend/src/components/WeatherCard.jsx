@@ -55,6 +55,11 @@ const WeatherCard = () => {
     });
   }, [supportsGeolocation]);
 
+  // The forecast strip covers today plus the next three days.
+  // forecast[0] is today and is skipped here since current conditions
+  // already cover "today" above; the strip shows the three days after it.
+  const upcomingForecast = weather?.forecast?.slice(1, 4) ?? [];
+
   return (
     <section className="h-full overflow-hidden rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-700 via-blue-600 to-sky-400 p-6 text-white shadow-xl hover:shadow-blue-500 shadow-blue-500/70 text-left">
       <div className="flex h-full flex-col gap-5 ">
@@ -71,7 +76,7 @@ const WeatherCard = () => {
 
         <div className="min-w-full rounded-2xl bg-white/15 p-4 backdrop-blur-sm md:min-w-[320px]">
           {status === 'success' && weather ? (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {/* Top line: location label + current temperature */}
               <div className="flex items-start justify-between gap-4">
                 <div>
@@ -114,6 +119,31 @@ const WeatherCard = () => {
                   <p className="mt-1 font-semibold text-white">{weather.windSpeed} mph</p>
                 </div>
               </div>
+
+              {/* 3-day forecast strip (the day after today, plus the two following it) */}
+              {upcomingForecast.length > 0 && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-sky-100">
+                    Next 3 Days
+                  </p>
+                  <div className="mt-2 grid grid-cols-3 gap-3">
+                    {upcomingForecast.map((day) => (
+                      <div key={day.date} className="rounded-xl bg-black/10 p-3 text-center">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-sky-100">
+                          {day.dayLabel}
+                        </p>
+                        <FaCloudSun className="mx-auto my-2 text-xl text-white" />
+                        <p className="text-sm font-semibold text-white">
+                          {day.high}° / {day.low}°
+                        </p>
+                        <p className="mt-1 truncate text-[11px] text-sky-50/90">
+                          {day.condition}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             // Same box structure, but used for loading and error states.

@@ -39,11 +39,28 @@ const getWeatherSummary = (code) => {
   };
 };
 
+// Turns an ISO date string ("2026-07-09") into a short day label.
+// Today gets a special "Today" label instead of its weekday name.
+const getDayLabel = (isoDate, index) => {
+  if (index === 0) {
+    return 'Today';
+  }
+
+  const date = new Date(`${isoDate}T00:00:00`);
+  return date.toLocaleDateString('default', { weekday: 'short' });
+};
+
 export async function fetchWeather(lat, lon) {
   try {
-    // Ask Open-Meteo for only the current values this app actually needs.
+    // Ask Open-Meteo for current conditions plus a 4-day daily forecast
+    // (today + next 3 days). timezone=auto keeps the daily buckets aligned
+    // to the driver's local day instead of UTC.
     const response = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,is_day&temperature_unit=fahrenheit&wind_speed_unit=mph`
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+      `&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,is_day` +
+      `&daily=weather_code,temperature_2m_max,temperature_2m_min` +
+      `&forecast_days=4&timezone=auto` +
+      `&temperature_unit=fahrenheit&wind_speed_unit=mph`
     );
 
     if (!response.ok) {
@@ -52,23 +69,42 @@ export async function fetchWeather(lat, lon) {
 
     const data = await response.json();
     const current = data.current;
+    const daily = data.daily;
 
     if (!current) {
       throw new Error('Weather API returned no current data.');
     }
 
-    // Translate the weather code into readable labels before returning it.
-    const summary = getWeatherSummary(current.weather_code);
+    // Translate the current weather code into readable labels before returning it.
+    const currentSummary = getWeatherSummary(current.weather_code);
+
+    // Build the forecast array (today + next 3 days) if the API returned daily data.
+    const forecast = daily && Array.isArray(daily.time)
+      ? daily.time.map((isoDate, index) => {
+          const summary = getWeatherSummary(daily.weather_code[index]);
+
+          return {
+            date: isoDate,
+            dayLabel: getDayLabel(isoDate, index),
+            condition: summary.condition,
+            description: summary.description,
+            high: Math.round(daily.temperature_2m_max[index]),
+            low: Math.round(daily.temperature_2m_min[index]),
+          };
+        })
+      : [];
 
     // Return a small cleaned-up object instead of exposing the raw API response.
     return {
       temp: Math.round(current.temperature_2m),
       feelsLike: Math.round(current.apparent_temperature),
-      condition: summary.condition,
-      description: summary.description,
+      condition: currentSummary.condition,
+      description: currentSummary.description,
       windSpeed: Math.round(current.wind_speed_10m),
       isDay: Boolean(current.is_day),
       locationLabel: 'Your area',
+      // forecast[0] is today, forecast[1..3] are the next three days.
+      forecast,
     };
   } catch (error) {
     // The component handles null by showing a fallback message.

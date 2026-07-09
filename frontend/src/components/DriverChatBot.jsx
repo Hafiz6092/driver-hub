@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa';
-import { askDriverAssistant } from '../utils/analytics';
 
 const DriverChatBot = ({ shifts, currentWeatherData }) => {
   const [messages, setMessages] = useState([
@@ -33,27 +32,38 @@ const DriverChatBot = ({ shifts, currentWeatherData }) => {
     setMessages((prev) => [...prev, { id: Date.now(), sender: 'user', text: userMsg }]);
     setLoading(true);
 
-    // Retrieve API key from environment configuration context safely
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || (typeof process !== 'undefined' && process.env?.REACT_APP_GEMINI_API_KEY);
+    // Call our own serverless endpoint — the Gemini API key lives only on
+    // the server (frontend/api/assistant.js reads it from process.env), so
+    // nothing sensitive is ever present in this client bundle.
+    try {
+      const res = await fetch('/api/assistant', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userMessage: userMsg,
+          chatHistory: messages,
+          shifts,
+          currentWeatherData,
+        }),
+      });
 
-    if (!apiKey) {
+      const data = await res.json();
+      const botResponse = data.reply || "Sorry, I ran into an error pulling those insights. Double check your API connection and try again.";
+
+      setMessages((prev) => [...prev, { id: Date.now() + 2, sender: 'bot', text: botResponse }]);
+    } catch (error) {
+      console.error('Assistant request failed:', error);
       setMessages((prev) => [
         ...prev,
         {
-          id: Date.now() + 1,
+          id: Date.now() + 2,
           sender: 'bot',
-          text: "Missing Gemini API Key. Please add VITE_GEMINI_API_KEY to your .env file to unlock conversation streams.",
+          text: "Sorry, I couldn't reach the assistant right now. Please try again in a moment.",
         },
       ]);
+    } finally {
       setLoading(false);
-      return;
     }
-
-    // Call the utility function passing all 5 arguments
-    const botResponse = await askDriverAssistant(userMsg, messages, shifts, apiKey, currentWeatherData);
-
-    setMessages((prev) => [...prev, { id: Date.now() + 2, sender: 'bot', text: botResponse }]);
-    setLoading(false);
   };
 
   return (

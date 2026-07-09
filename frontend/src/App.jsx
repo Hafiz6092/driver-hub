@@ -6,7 +6,7 @@ import ShiftList from './components/ShiftList';
 import WeeklyBreakdown from './components/WeeklyBreakdown';
 import NavBar from './components/NavBar';
 import WeatherCard from './components/WeatherCard';
-import AIWeeklyInsights from './components/AIWeeklyInsights';
+import DriverChatBot from './components/DriverChatBot';
 import RecordsOverview from './components/RecordsOverview';
 import { getWeekWithMostShifts } from './utils/analytics';
 
@@ -60,8 +60,8 @@ function App() {
             {/* Top-right: overall earnings totals */}
             <EarningsSummary shifts={shifts} />
 
-            {/* Bottom-left: rule-based insight messages built from shift history */}
-            <AIWeeklyInsights shifts={shifts} />
+            {/* Bottom-left: Interactive Gemini chatbot assistant */}
+            <DriverChatBot shifts={shifts} />
 
             {/* Bottom-right: only show the single busiest week instead of all weeks */}
             <WeeklyBreakdown
